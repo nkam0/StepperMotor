@@ -56,18 +56,19 @@ void setup()
 void loop()
 {
   if (newRequest){
-    int stepsToTake = (steps.toInt()/360)*(4*endPoint);
     if (direction == "CW"){
-      stepper1.moveTo(stepper1.currentPosition() + stepsToTake);
+      stepper1.setSpeed(1000);
+      stepper1.moveTo(steps.toInt());
       Serial.print("CW");
     }
     else{
-        stepper1.moveTo(stepper1.currentPosition() - stepsToTake);
-        Serial.print("CCW");
+      stepper1.setSpeed(-1000);
+      stepper1.moveTo(steps.toInt());
+      Serial.print("CCW");
     }
     
     while(true){
-      stepper1.run();
+      stepper1.runSpeed();
       Serial.println(stepper1.distanceToGo());
       if (stepper1.distanceToGo()==0){
         break;
