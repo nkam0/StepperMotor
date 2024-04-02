@@ -44,6 +44,7 @@ function onClose(event) {
 function submitForm(steps, direction){
 
   // if(websocket.send(steps+"&"+direction)){
+    
 
     if (direction=="CW"){
       document.querySelector("#loader").classList.add("loadercw");
@@ -54,6 +55,7 @@ function submitForm(steps, direction){
   // }else{
   //   console.log("ERROR SENDING TO WEBSOCKET")
   // }
+
 }
 
 
@@ -79,7 +81,7 @@ let getAngle = function (ex, ey, cx, cy) {
     
   let dy = ey-cy;
   let dx = ex-cx;
-  // console.log('coordinates',dx, ", ", dy);
+  console.log('coordinates',dx, ", ", dy);
   let theta = Math.atan2(dy, dx); // range (-PI, PI]
   // console.log('theta',theta);
   let value = Math.round(theta * (max-min)/Math.PI/2 +min );
