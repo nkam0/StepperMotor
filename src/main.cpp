@@ -12,8 +12,8 @@ const int TOUCH_THRESHOLD = 40; // turn on light if touchRead value < this thres
 int endPoint = 1024;     // Move this many steps; 1024 = approx 1/4 turn
 
 // Replace with your network credentials
-const char* ssid = "BELL858";
-const char* password = "Bigbrain02";
+const char* ssid = "Microbonds";
+const char* password = "M1cr0be!";
 
 
 //Variables to save values from HTML form
@@ -57,19 +57,30 @@ void loop()
 {
   if (newRequest){
     if (direction == "CW"){
-      stepper1.setSpeed(1000);
+      stepper1.setMaxSpeed(4000.0);
+      stepper1.setAcceleration(500.0);
+      stepper1.setSpeed(200);
       stepper1.moveTo(steps.toInt());
-      Serial.print("CW");
+      Serial.println(steps.toInt());
+      Serial.println(stepper1.currentPosition());
+      Serial.print("Starting: CW");
     }
-    else{
-      stepper1.setSpeed(-1000);
+    else if (direction == "CCW"){
+      stepper1.setMaxSpeed(4000.0);
+      stepper1.setAcceleration(500.0);
+      stepper1.setSpeed(-200);
+      // stepper1.setSpeed(-1000);
       stepper1.moveTo(steps.toInt());
-      Serial.print("CCW");
+      Serial.println(steps.toInt());
+      Serial.println(stepper1.currentPosition());
+      Serial.println("Starting: CCW");
     }
     
     while(true){
-      stepper1.runSpeed();
-      Serial.println(stepper1.distanceToGo());
+      stepper1.run();
+
+      // stepper1.runSpeed();
+      // Serial.println(stepper1.distanceToGo());
       if (stepper1.distanceToGo()==0){
         break;
       }
