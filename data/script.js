@@ -21,7 +21,7 @@ window.addEventListener('load', onload);
 let direction;
 
 function onload(event) {
-  initWebSocket();
+  // initWebSocket();
 }
 
 function initWebSocket() {
