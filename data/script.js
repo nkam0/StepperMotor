@@ -1,176 +1,149 @@
-let ball = document.getElementById("ball");
-let circle = document.getElementById('circle');
-let dragable = false;
-let min = 0;
-let max = 360;
-let endPoint = 1024;     // Move this many steps; 1024 = approx 1/4 turn
-
-let posX;
-let posY;
-let cx = 131;
-let cy = 131;
-let r = 137.5;
-let initialAngle, initialValue, finalAngle, finalValue, prevValue;
-let dragCounter;
-let startSet = false;
+let knob_being_dragged = null;
+let knob_drag_previous_rad = null;
+let knob_drag_previous_rotations = null;
+let knob_start = 0;
+let knob_end = 0;
+let cur_rotations = null;
 
 
-let gateway = `ws://${window.location.hostname}/ws`;
-let websocket;
-window.addEventListener('load', onload);
-let direction;
 
-function onload(event) {
-  // initWebSocket();
-}
 
-function initWebSocket() {
-  console.log('Trying to open a WebSocket connection…');
-  websocket = new WebSocket(gateway);
-  websocket.onopen = onOpen;
-  websocket.onclose = onClose;
-  websocket.onmessage = onMessage;
-}
-
-function onOpen(event) {
-  console.log('Connection opened');
-}
-
-function onClose(event) {
-  console.log('Connection closed');
-  setTimeout(initWebSocket, 2000);
-}
-
-function submitForm(steps, direction){
-
-  websocket.send(steps+"&"+direction)
-
-  if (direction=="CW"){
-    document.querySelector("#loader").classList.add("loadercw");
-  }
-  else{
-    document.querySelector("#loader").classList.add("loaderccw");
-  }
+function format_number(number) {
+    return number.toFixed(0);
 }
 
 
-function onMessage(event) {
-  console.log(event.data);
-  direction = event.data;
-  if (direction=="stop"){ 
-    document.querySelector("#loader").classList.remove("loadercw", "loaderccw");
-  }
-  else if(direction=="CW" || direction=="CCW"){
-      // document.getElementById("motor-state").innerHTML = "motor spinning...";
-      // document.getElementById("motor-state").style.color = "blue";
-      if (direction=="CW"){
-        document.querySelector("#loader").classList.add("loadercw");
-      }
-      else{
-        document.querySelector("#loader").classList.add("loaderccw");
-      }
-  }
-}
+function set_rotations(rotations) {
 
-let getAngle = function (ex, ey, cx, cy) {
+  cur_rotations = rotations;
   
-  let dy = ey-cy;
-  let dx = ex-cx;
-  // console.log('coordinates',ex, ", ", ey);
-  let theta = Math.atan2(dy, dx); // range (-PI, PI]
-  // console.log('theta',theta);
-  let value = Math.round(theta * (max-min)/Math.PI/2 +min );
+  foobar.getElementsByClassName('knob_number')[0].textContent = format_number(cur_rotations * 360);
+  document.getElementById('rangetesting').value = cur_rotations;
+  foobar.getElementsByClassName('knob_gfx')[0].style.transform = 'rotate(' + (cur_rotations * 360) + 'deg)';
 
-  if(theta < 0.0) 
-  {
-    value = value + max - min;
+  // Ensures the start and end angles are between -360 and 360
+  if(Math.round(rotations*360)>360){
+    knob_end = 360;
+  }else if(Math.round(rotations*360)<-360){
+    knob_end = -360;
+  }else{
+    knob_end = Math.round(rotations*360);
   }
-  // console.log('value',value);
-  
-  return [theta, value];
-};
-
-
-function getCoords (cx, cy, r, a) {
-  let x = cx + r * Math.cos(a);
-  let y = cy + r * Math.sin(a);
-  let coords = {x: x, y: y};
-  return coords;
 }
 
-function mouseDown(e) {
-  posX = e.clientX-circle.offsetLeft;
-  posY = e.clientY-circle.offsetTop;
-  [initialAngle, initialValue] = getAngle(posX, posY, cx, cy);
-  console.log("START: " + initialValue);
 
-
-  startSet = true;
-  dragCounter = 0;
-  dragable = true; 
+function get_position(elem) {
+  var rect = elem.getBoundingClientRect();
+  return [
+    rect.left + (rect.right - rect.left) / 2,
+    rect.top + (rect.bottom - rect.top) / 2
+  ];
 }
 
-function mouseMove(e) {
+function get_mouse_angle(event, center_elem) {
+  var pos = get_position(center_elem);
 
-  if (dragable) 
-  {
-    posX = e.clientX-circle.offsetLeft;
-    posY = e.clientY-circle.offsetTop;
-;
-    let [angle, value] = getAngle(posX, posY, cx, cy);
-    let coords = getCoords(cx, cy, r, angle);
-
-    document.getElementById('value').innerHTML = value;
-
-    if (value > prevValue){
-      dragCounter ++;
-    } 
-    else if (value < prevValue) {
-      dragCounter--;
-    }
-    prevValue = value;
-
-    ball.style.left = coords.x + 'px';
-    ball.style.top = coords.y + 'px';
   
+  var cursor = [event.clientX, event.clientY];
+  if (event.targetTouches && event.targetTouches[0]) {
+    cursor = [event.targetTouches[0].clientX, event.targetTouches[0].clientY];
+    //cursor = [e.targetTouches[0].pageX, e.targetTouches[0].pageY];
   }
+  
+  var rad = Math.atan2(cursor[1] - pos[1], cursor[0] - pos[0]);
+  rad += Math.PI / 2;
+
+  return rad;
+}
+
+
+function start_dragging(e) {
+  knob_being_dragged = e.currentTarget;
+  e.preventDefault();
+  e.stopPropagation();
+  
+  var rad = get_mouse_angle(e, knob_being_dragged.getElementsByClassName('knob_center')[0]);
+  knob_start = knob_end;
+  knob_drag_previous_rad = rad;
+  knob_drag_previous_rotations = cur_rotations;
+}
+
+function stop_dragging(e) {
+  knob_being_dragged = null;
+
+  let steps = knob_end - knob_start;
+
+  if (steps>0){
+    direction = "CW"
+  }else if(steps<0){
+    direction = "CCW"
+  }else{
+    direction = null;
+  }
+
+  console.log("START: " + knob_start + ", END: " + knob_end + ", " + steps + ", " + direction);  
+  submitForm(steps, direction); 
+}
+
+function drag_rotate(e) {
+  if (!knob_being_dragged) {
+    return;
+  }
+  
+  var rad = get_mouse_angle(e, knob_being_dragged.getElementsByClassName('knob_center')[0]);
+  var old = knob_drag_previous_rad;
+  knob_drag_previous_rad = rad;
+
+  var delta = rad - old;
+  if (delta < 0) {
+    // Because this is a circle
+    delta += Math.PI * 2;
+  }
+  if (delta > Math.PI) {
+    // Converting from 0..360 to -180..180.
+    delta -= Math.PI * 2;
+  }
+  console.assert(delta >= -Math.PI && delta <= Math.PI, {delta: delta, rad: rad, old: old});
+  
+  // var rotation = rad / Math.PI / 2;
+  
+  let delta_rotation = delta / Math.PI / 2;  
+  let rotations = knob_drag_previous_rotations + delta_rotation; 
+  
+  knob_drag_previous_rotations = rotations;
+
+  //Allows only 360 to -360 rotation
+  if (knob_drag_previous_rotations>1 || knob_drag_previous_rotations<-1){
+    knob_being_dragged = null;
+    return;
+  }
+  
+  set_rotations(rotations);
+
   
 }
 
-function mouseUp(e) {
-  dragable = false;
-  posX = e.clientX-circle.offsetLeft;
-  posY = e.clientY-circle.offsetTop;
-  [finalAngle, finalValue] = getAngle(posX, posY, cx, cy);
 
-  if (startSet==true){
-    console.log("END: " + finalValue)
-
-    let steps = Math.floor((finalValue/360)*(4*endPoint))
-
-    if (dragCounter > 0){
-      direction = "CW"  
-    }
-    else if(dragCounter < 0){
-      direction = "CCW"
-    }
-
-    console.log(steps + ", " + direction);
-    submitForm(steps, direction) 
-  }
+function set_event_listeners() {
+  let elem = document.getElementById('foobar').getElementsByClassName('knob')[0];
+  let sliderElem = document.querySelector('#rangetesting');
+  //for desktops
+  elem.addEventListener('mousedown', start_dragging);
+  sliderElem.addEventListener('mousedown', (e) => knob_start=knob_end);
+  document.addEventListener('mouseup', stop_dragging);
+  document.addEventListener('mousemove', drag_rotate);
+  //for touchscreens
+  elem.addEventListener('touchstart', start_dragging);
+  sliderElem.addEventListener('touchstart', (e) => knob_start=knob_end);
+  document.addEventListener('touchend', stop_dragging);
+  document.addEventListener('touchmove', drag_rotate);
   
-  startSet = false;
-  
+  document.getElementById('rangetesting').addEventListener('input', function(e) {
+    
+    let number = parseFloat(e.target.value);
+    set_rotations(number);    
+  });
 }
-
-let getBallElement = document.getElementById("ball")
-// document.addEventListener('DOMContentLoaded', function() {
-//   getBallElement.addEventListener('mousedown', function(e) {
-//     mouseDown(e);
-//   });
-// });
-window.onmousedown = function(e) {mouseDown(e)};
-window.onmouseup = function(e) {mouseUp(e)};
-window.onmousemove = function(e) {mouseMove(e)};
-
+set_event_listeners();
+set_rotations(0);
 

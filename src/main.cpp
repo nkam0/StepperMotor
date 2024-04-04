@@ -56,25 +56,29 @@ void setup()
 void loop()
 {
   if (newRequest){
-    if (direction == "CW"){
-      stepper1.setMaxSpeed(4000.0);
-      stepper1.setAcceleration(500.0);
-      stepper1.setSpeed(200);
-      stepper1.moveTo(steps.toInt());
-      Serial.println(steps.toInt());
-      Serial.println(stepper1.currentPosition());
-      Serial.print("Starting: CW");
-    }
-    else if (direction == "CCW"){
-      stepper1.setMaxSpeed(4000.0);
-      stepper1.setAcceleration(500.0);
-      stepper1.setSpeed(-200);
-      // stepper1.setSpeed(-1000);
-      stepper1.moveTo(steps.toInt());
-      Serial.println(steps.toInt());
-      Serial.println(stepper1.currentPosition());
-      Serial.println("Starting: CCW");
-    }
+    stepper1.setCurrentPosition(0);
+    stepper1.moveTo(steps.toInt());
+    Serial.println(steps.toInt());
+    // if (direction == "CW"){
+    //   // stepper1.setMaxSpeed(4000.0);
+    //   // stepper1.setAcceleration(500.0);
+    //   stepper1.setSpeed(200);
+    //   stepper1.setCurrentPosition(0);
+    //   stepper1.moveTo(steps.toInt());
+    //   Serial.println(steps.toInt());
+    //   Serial.println(stepper1.currentPosition());
+    //   Serial.print("Starting: CW");
+    // }
+    // else if (direction == "CCW"){
+    //   // stepper1.setMaxSpeed(4000.0);
+    //   // stepper1.setAcceleration(500.0);
+    //   stepper1.setSpeed(-200);
+    //   stepper1.setCurrentPosition(0);
+    //   stepper1.moveTo(steps.toInt());
+    //   Serial.println(steps.toInt());
+    //   Serial.println(stepper1.currentPosition());
+    //   Serial.println("Starting: CCW");
+    // }
     
     while(true){
       stepper1.run();

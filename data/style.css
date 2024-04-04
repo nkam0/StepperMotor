@@ -1,90 +1,55 @@
-.prevent-select {
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
+svg.dial {
+  width: 400px;
+  height: 400px;
 }
 
-
-body {
-  background-color: #b7b6b6;
+#circle {
+  stroke: #add8e6;
+  stroke-width: 0.75px;
+  fill: white;
 }
-
-#main {
-  text-align: center;
-  margin: auto;
-  margin-top: 20px;
+#dot {
+  fill: #65a49c;
 }
-   
-.circle {
-  position:relative;
-  left: 50%;
-  transform: translate(-50%);
-
-  width: 300px;
-  height: 300px;
-  background:#add8e6;
-  border-radius:100%;
-  z-index:120;
-}
-   
-#ball {
-  content: " ";
-  position: absolute;
-  z-index: 5;
-  left: 271px;
-  top:131px;
-  background: #65a49c;
-  height: 40px;
-  width: 40px;
-  border-radius: 100%;
-  
-  &:hover {
-    cursor: pointer;
-  }
-}
-
-.inner {
-  position:absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.dial .knob_number {
+  fill: #65a49c;
+  font-size: 3px;
+  font-family: "Helvetica", "Arial", sans-serif;
+  font-weight: bold;
+  text-anchor: middle;
+  dominant-baseline: central;
   pointer-events: none;
-
-  width: 250px;
-  height: 250px;
-  border-radius: 100%;
-  background-color: white;
+  
+  /* https://stackoverflow.com/questions/826782/css-rule-to-disable-text-selection-highlighting */
+  -webkit-touch-callout: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-#value {
-  z-index: 1000;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  text-align: center;
-  font-size: 60px;
-  font-family: Arial;
-  font-weight: 1000; 
-  color:#65a49c; 
-}
-
-.loadercw {
+.loaderCW {
   position: absolute;
   /* manually calculates center position i.e. (half screen - half element width) */
-  top: calc(50% - 150px);
-  left: calc(50% - 150px);
+  top: calc(50% - 180px);
+  left: calc(50% - 180px);
 
   z-index: 1;
  
-  border: 25px solid #add8e6;
+  border: 30px solid #eaa14e;
   border-radius: 50%;
-  border-top: 25px solid #3498db;
-  width: 300px;
-  height: 300px;
+  border-top: 30px solid #3498db;
+  width: 360px;
+  height: 360px;
   -webkit-animation: spincw 2s linear infinite; 
   animation: spincw 2s linear infinite; 
+
+    /* https://stackoverflow.com/questions/826782/css-rule-to-disable-text-selection-highlighting */
+    -webkit-touch-callout: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* Safari */
@@ -96,29 +61,35 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-.loaderccw {
+.loaderCCW {
   position: absolute;
   /* manually calculates center position i.e. (half screen - half element width) */
-  top: calc(50% - 150px);
-  left: calc(50% - 150px);
+  top: calc(50% - 180px);
+  left: calc(50% - 180px);
 
   z-index: 1;
  
-  border: 25px solid #add8e6;
+  border: 30px solid #eaa14e;
   border-radius: 50%;
-  border-top: 25px solid #3498db;
-  width: 300px;
-  height: 300px;
+  border-top: 30px solid #3498db;
+  width: 360px;
+  height: 360px;
   -webkit-animation: spinccw 2s linear infinite; 
   animation: spinccw 2s linear infinite; 
+
+    /* https://stackoverflow.com/questions/826782/css-rule-to-disable-text-selection-highlighting */
+    -webkit-touch-callout: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
+
 /* Safari */
 @-webkit-keyframes spinccw {
   100% { -webkit-transform: rotate(-360deg); }
 }
 
 @keyframes spinccw {
-  100% { transform: rotate(-360deg);}
+  100% { transform: rotate(-360deg); }
 }
-
-
