@@ -56,28 +56,24 @@ void setup()
 void loop()
 {
   if (newRequest){
+    Serial.print("START");
     stepper1.setCurrentPosition(0);
     stepper1.moveTo(steps.toInt());
-    Serial.println(steps.toInt());
+    
     // if (direction == "CW"){
-    //   // stepper1.setMaxSpeed(4000.0);
-    //   // stepper1.setAcceleration(500.0);
+
     //   stepper1.setSpeed(200);
     //   stepper1.setCurrentPosition(0);
     //   stepper1.moveTo(steps.toInt());
     //   Serial.println(steps.toInt());
-    //   Serial.println(stepper1.currentPosition());
-    //   Serial.print("Starting: CW");
+    //   Serial.print("START");
     // }
     // else if (direction == "CCW"){
-    //   // stepper1.setMaxSpeed(4000.0);
-    //   // stepper1.setAcceleration(500.0);
+
     //   stepper1.setSpeed(-200);
     //   stepper1.setCurrentPosition(0);
     //   stepper1.moveTo(steps.toInt());
     //   Serial.println(steps.toInt());
-    //   Serial.println(stepper1.currentPosition());
-    //   Serial.println("Starting: CCW");
     // }
     
     while(true){
@@ -89,7 +85,8 @@ void loop()
         break;
       }
     }
-    Serial.print("DONE");
+    stepper1.stop();
+    Serial.println("DONE");
 
     newRequest = false;
     notifyClients("stop");

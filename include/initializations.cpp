@@ -54,9 +54,9 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     message = (char*)data;
     steps = message.substring(0, message.indexOf("&"));
     direction = message.substring(message.indexOf("&")+1, message.length());
-    Serial.print("steps");
+    Serial.print("STEPS: ");
     Serial.println(steps);
-    Serial.print("direction");
+    Serial.print("DIRECION: ");
     Serial.println(direction);
     notifyClients(direction);
     newRequest = true;

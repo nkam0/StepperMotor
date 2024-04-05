@@ -6,6 +6,7 @@ let getSlider = document.querySelector("input");
 let getDot = document.querySelector("#dot");
 let getKnob = document.querySelector(".knob_number");
 let wsStatus = 0;
+let stepperRatio = 1024/90;     // Move this many steps; 1024 = approx 1/4 turn
 
 window.addEventListener('load', onload);
 
@@ -34,8 +35,11 @@ function onClose(event) {
 }
 
 function submitForm(steps, direction){
-
+  
+  console.log(steps);
   if (wsStatus == 1){
+    steps = Math.round(steps * stepperRatio);
+
     websocket.send(steps+"&"+direction)
     getSlider.setAttribute("disabled", "");
     getDot.setAttribute("style", "fill:white");
@@ -58,7 +62,7 @@ function onMessage(event) {
   console.log(event.data);
   direction = event.data;
   if (direction=="stop"){ 
-    getLoader.classList.remove("loadercw", "loaderccw");
+    getLoader.classList.remove("loaderCW", "loaderCCW");
     getSlider.removeAttribute("disabled", "");
     getDot.removeAttribute("style", "fill:white");
     getKnob.removeAttribute("style","fill: #eaa14e")

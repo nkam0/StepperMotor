@@ -15,7 +15,6 @@ extern const int TOUCH_THRESHOLD; // turn on light if touchRead value < this thr
 extern int endPoint;     // Move this many steps; 1024 = approx 1/4 turn
 
 volatile boolean stopNow = false;    // flag for Interrupt Service routine
-int cycleCount = 0;                  // counter for endpoint cycles
 boolean homed = false;               // flag to indicate when motor is homed
 
 void IRAM_ATTR ISR() 
@@ -25,16 +24,15 @@ void IRAM_ATTR ISR()
 
 bool homing(){
     // Set Stepper Motor Parameters
-    stepper1.setMaxSpeed(4000.0);
-    stepper1.setAcceleration(500.0);
-    stepper1.setSpeed(200);
-    stepper1.moveTo(endPoint);
+    stepper1.setMaxSpeed(1000);
+    stepper1.setAcceleration(500);
+    stepper1.setSpeed(1000);
     Serial.println("HOMING...");
 
     while(1){
-        // Serial.println(touchRead(15));
+
         if (stopNow){
-            touchDetachInterrupt(CAPACITIVE_TOUCH_INPUT_PIN);                          // Interrupt not needed again (for the moment)
+            // touchDetachInterrupt(CAPACITIVE_TOUCH_INPUT_PIN);                          // Interrupt not needed again (for the moment)
             // Serial.print("Interrupted at ");
             // Serial.println(stepper1.currentPosition());
             stepper1.stop();
@@ -44,16 +42,8 @@ bool homing(){
             stopNow = false;                            // Prevents repeated execution of the above code
             homed = true;
         }
-        else if (stepper1.distanceToGo() == 0 && !homed)     //executed repeatedly until we hit the limitswitch
-        {
-            stepper1.setCurrentPosition(0);
-            stepper1.moveTo(endPoint);
-            cycleCount ++;
-            // Serial.print("cycle count = ");
-            // Serial.println(cycleCount);
-            // Serial.println(stepper1.currentPosition());
-        }
-        stepper1.run();
+        
+        stepper1.runSpeed();
         if(homed){
             return 1;
         }
