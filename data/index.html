@@ -11,31 +11,46 @@
 
 <nav class="navbar navbar-dark" style="background-color: #65a49c">
   <span class="navbar-brand mb-0 h1">Motor Dial</span>
-</nav>
+</nav>  
 
-<body>
+
   
-<div class="position-relative">
-  <div class="position-absolute top-0 start-50 translate-middle-x">
-    <div id="loader"></div>
-    <svg viewBox="-6 -6 12 12" class="dial" id="foobar">
-      <g class="knob">
-        <circle class="knob_center" cx="0" cy="0" r="0"/>
-        <g class="knob_gfx">
-          <circle id="circle" cx="0" cy="0" r="5"/>
-          <circle id="dot" cx="0" cy="-4" r=".25"/>
-        </g>
-        <text class="knob_number"/>
-      </g>
-    </svg>
-    <div class="position-absolute bottom-10 start-50 translate-middle-x" style="margin-top: px;" >
-      <input type="range" min="-1" max="1" value="0" step="0.03125" id="rangetesting" style="width: 512px; display: block;"/>
+<div class="container">
+  <div id="dial-row" class="row justify-content-center position-relative">
+    <div class="col"></div>
+    <div id="dial-col" class="col">
+      <!-- loading bar element -->
+      <div class="position-absolute top-50 start-50 translate-middle">
+        <div id="loader"></div>
+      </div>
+      <!-- dial element -->
+      <div class = "text-center">
+        <svg viewBox="-6 -6 12 12" class="dial" id="foobar">
+          <g class="knob">
+            <circle class="knob_center" cx="0" cy="0" r="0"/>
+            <g class="knob_gfx">
+              <circle id="circle" cx="0" cy="0" r="5"/>
+              <circle id="dot" cx="0" cy="-4" r=".25"/>
+            </g>
+            <text class="knob_number"/>
+          </g>
+        </svg>
+      </div>
+    </div> 
+    <div class="col"></div>
+  </div>
+
+  <div class="row justify-content-center">
+      <input type="range" min="-1" max="1" value="0" step="0.03125" id="rangetesting" style="width: 512px; display: block;"/>   
+  </div>
+
+  <div class="row justify-content-center"> 
+    <div class="col text-center mt-3">
+      <input id="homeBtn" class="btn btn-primary" type="button" value="Home">
     </div>
   </div>
-  
 </div>
 
-</body>
 
 <script src="script.js"></script>
 <script src="ws_script.js"></script>

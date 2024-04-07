@@ -6,6 +6,12 @@ let knob_end = 0;
 let cur_rotations = null;
 
 
+//elements
+let knobElem = document.querySelector('#dial-col');
+let sliderElem = document.querySelector('#rangetesting');
+let homeBtnElem = document.querySelector("#homeBtn");
+
+
 
 
 function format_number(number) {
@@ -32,8 +38,9 @@ function set_rotations(rotations) {
 }
 
 
-function get_position(elem) {
-  var rect = elem.getBoundingClientRect();
+function get_position(knobElem) {
+
+  var rect = knobElem.getBoundingClientRect();
   return [
     rect.left + (rect.right - rect.left) / 2,
     rect.top + (rect.bottom - rect.top) / 2
@@ -43,11 +50,9 @@ function get_position(elem) {
 function get_mouse_angle(event, center_elem) {
   var pos = get_position(center_elem);
 
-  
   var cursor = [event.clientX, event.clientY];
   if (event.targetTouches && event.targetTouches[0]) {
     cursor = [event.targetTouches[0].clientX, event.targetTouches[0].clientY];
-    //cursor = [e.targetTouches[0].pageX, e.targetTouches[0].pageY];
   }
   
   var rad = Math.atan2(cursor[1] - pos[1], cursor[0] - pos[0]);
@@ -57,10 +62,17 @@ function get_mouse_angle(event, center_elem) {
 }
 
 
+function drag_outside(e){
+  e.stopPropagation();
+  stop_dragging();
+}
+
 function start_dragging(e) {
   knob_being_dragged = e.currentTarget;
   e.preventDefault();
   e.stopPropagation();
+
+  knobElem.addEventListener('mouseleave', drag_outside);
   
   var rad = get_mouse_angle(e, knob_being_dragged.getElementsByClassName('knob_center')[0]);
   knob_start = knob_end;
@@ -70,6 +82,7 @@ function start_dragging(e) {
 
 function stop_dragging(e) {
   knob_being_dragged = null;
+  knobElem.removeEventListener('mouseleave', drag_outside);
 
   let steps = knob_end - knob_start;
 
@@ -123,27 +136,50 @@ function drag_rotate(e) {
   
 }
 
+function homing() {
+  if (wsStatus == 1){
+    websocket.send("homing");
+  }
+  //zero everything
+  knob_start = 0;
+  knob_end = 0;
+  knob_drag_previous_rad = 0;
+  knob_drag_previous_rotations = 0;
+  cur_rotations = 0;
+  foobar.getElementsByClassName('knob_number')[0].textContent = format_number(0);
+  document.getElementById('rangetesting').value = 0;
+  foobar.getElementsByClassName('knob_gfx')[0].style.transform = 'rotate(' + (0) + 'deg)';
+}
+
+function test(){
+  console.log("outside")
+}
 
 function set_event_listeners() {
-  let elem = document.getElementById('foobar').getElementsByClassName('knob')[0];
-  let sliderElem = document.querySelector('#rangetesting');
+
   //for desktops
-  elem.addEventListener('mousedown', start_dragging);
+  homeBtnElem.addEventListener('click', homing);
+  knobElem.addEventListener('mousedown', start_dragging);
+  knobElem.addEventListener('mouseup', stop_dragging);
+  knobElem.addEventListener('mousemove', drag_rotate);
   sliderElem.addEventListener('mousedown', (e) => knob_start=knob_end);
-  document.addEventListener('mouseup', stop_dragging);
-  document.addEventListener('mousemove', drag_rotate);
   //for touchscreens
-  elem.addEventListener('touchstart', start_dragging);
+  knobElem.addEventListener('touchstart', start_dragging);
+  knobElem.addEventListener('touchend', stop_dragging);
+  knobElem.addEventListener('touchmove', drag_rotate);
   sliderElem.addEventListener('touchstart', (e) => knob_start=knob_end);
-  document.addEventListener('touchend', stop_dragging);
-  document.addEventListener('touchmove', drag_rotate);
-  
-  document.getElementById('rangetesting').addEventListener('input', function(e) {
-    
+  //input via slider
+  document.getElementById('rangetesting').addEventListener('change', function(e) {
     let number = parseFloat(e.target.value);
-    set_rotations(number);    
+    set_rotations(number);
+    stop_dragging();  
   });
 }
+
+
 set_event_listeners();
 set_rotations(0);
+
+
+
 

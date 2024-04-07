@@ -22,6 +22,7 @@ String direction ="STOP";
 String steps;
 
 bool newRequest = false;
+bool homeRequest = false;
 
 
 
@@ -56,31 +57,13 @@ void setup()
 void loop()
 {
   if (newRequest){
-    Serial.print("START");
+    Serial.println("START");
     stepper1.setCurrentPosition(0);
     stepper1.moveTo(steps.toInt());
-    
-    // if (direction == "CW"){
-
-    //   stepper1.setSpeed(200);
-    //   stepper1.setCurrentPosition(0);
-    //   stepper1.moveTo(steps.toInt());
-    //   Serial.println(steps.toInt());
-    //   Serial.print("START");
-    // }
-    // else if (direction == "CCW"){
-
-    //   stepper1.setSpeed(-200);
-    //   stepper1.setCurrentPosition(0);
-    //   stepper1.moveTo(steps.toInt());
-    //   Serial.println(steps.toInt());
-    // }
+  
     
     while(true){
       stepper1.run();
-
-      // stepper1.runSpeed();
-      // Serial.println(stepper1.distanceToGo());
       if (stepper1.distanceToGo()==0){
         break;
       }
@@ -90,6 +73,10 @@ void loop()
 
     newRequest = false;
     notifyClients("stop");
+  }
+  else if(homeRequest){
+    homing();
+    homeRequest=false;
   }
   ws.cleanupClients();
 

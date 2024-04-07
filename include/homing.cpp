@@ -1,4 +1,5 @@
 #include <AccelStepper.h>
+#include "initialization.h"
 
 #define HALFSTEP 8
 
@@ -17,13 +18,18 @@ extern int endPoint;     // Move this many steps; 1024 = approx 1/4 turn
 volatile boolean stopNow = false;    // flag for Interrupt Service routine
 boolean homed = false;               // flag to indicate when motor is homed
 
+
 void IRAM_ATTR ISR() 
 {
+    Serial.println("ISR Triggered");
   stopNow = true; // Set flag to show Interrupt recognised and then stop the motor
 };
 
 bool homing(){
+    
     // Set Stepper Motor Parameters
+    stopNow = false;
+    notifyClients("homing");
     stepper1.setMaxSpeed(1000);
     stepper1.setAcceleration(500);
     stepper1.setSpeed(1000);
@@ -45,6 +51,8 @@ bool homing(){
         
         stepper1.runSpeed();
         if(homed){
+            homed = false;
+            notifyClients("stop");
             return 1;
         }
     }

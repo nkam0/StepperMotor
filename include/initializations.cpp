@@ -19,6 +19,7 @@ extern String direction;
 extern String steps;
 
 extern bool newRequest;
+extern bool homeRequest;
 
 // Initialize SPIFFS
 void initSPIFFS() {
@@ -52,14 +53,20 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
   if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
     data[len] = 0;
     message = (char*)data;
-    steps = message.substring(0, message.indexOf("&"));
-    direction = message.substring(message.indexOf("&")+1, message.length());
-    Serial.print("STEPS: ");
-    Serial.println(steps);
-    Serial.print("DIRECION: ");
-    Serial.println(direction);
-    notifyClients(direction);
-    newRequest = true;
+
+    if (strcmp((char*)data, "homing") == 0) {
+      Serial.println(message);
+      homeRequest= true;
+    }else{
+      steps = message.substring(0, message.indexOf("&"));
+      direction = message.substring(message.indexOf("&")+1, message.length());
+      Serial.print("STEPS: ");
+      Serial.println(steps);
+      Serial.print("DIRECION: ");
+      Serial.println(direction);
+      notifyClients(direction);
+      newRequest = true;
+    }
   }
 }
 

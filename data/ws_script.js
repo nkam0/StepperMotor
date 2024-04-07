@@ -4,7 +4,8 @@ let direction;
 let getLoader = document.querySelector("#loader");
 let getSlider = document.querySelector("input");
 let getDot = document.querySelector("#dot");
-let getKnob = document.querySelector(".knob_number");
+let getKnobValue = document.querySelector(".knob_number");
+let getHomeBtn = document.querySelector("#homeBtn");
 let wsStatus = 0;
 let stepperRatio = 1024/90;     // Move this many steps; 1024 = approx 1/4 turn
 
@@ -36,14 +37,15 @@ function onClose(event) {
 
 function submitForm(steps, direction){
   
-  console.log(steps);
   if (wsStatus == 1){
     steps = Math.round(steps * stepperRatio);
 
     websocket.send(steps+"&"+direction)
+    
     getSlider.setAttribute("disabled", "");
     getDot.setAttribute("style", "fill:white");
-    getKnob.setAttribute("style","fill: #eaa14e")
+    getKnobValue.setAttribute("style","fill: #eaa14e")
+    getHomeBtn.setAttribute("disabled", "");
 
     if (direction=="CW"){
       getLoader.classList.add("loaderCW");
@@ -65,7 +67,8 @@ function onMessage(event) {
     getLoader.classList.remove("loaderCW", "loaderCCW");
     getSlider.removeAttribute("disabled", "");
     getDot.removeAttribute("style", "fill:white");
-    getKnob.removeAttribute("style","fill: #eaa14e")
+    getKnobValue.removeAttribute("style","fill: #eaa14e")
+    getHomeBtn.removeAttribute("disabled", "");
   }
   else if(direction=="CW" || direction=="CCW"){
       if (direction=="CW"){
@@ -74,6 +77,12 @@ function onMessage(event) {
       else{
         getLoader.classList.add("loaderccw");
       }
+  }else if (direction =="homing"){
+    getLoader.classList.add("loadercw");
+    getSlider.setAttribute("disabled", "");
+    getHomeBtn.setAttribute("disabled", "");
+    getDot.setAttribute("style", "fill:white");
+    getKnobValue.setAttribute("style","fill: #eaa14e")
   }
 }
 
