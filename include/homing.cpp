@@ -38,7 +38,7 @@ bool homing(){
     while(1){
 
         if (stopNow){
-            // touchDetachInterrupt(CAPACITIVE_TOUCH_INPUT_PIN);                          // Interrupt not needed again (for the moment)
+            touchDetachInterrupt(CAPACITIVE_TOUCH_INPUT_PIN);                          // Interrupt not needed again (for the moment)
             // Serial.print("Interrupted at ");
             // Serial.println(stepper1.currentPosition());
             stepper1.stop();

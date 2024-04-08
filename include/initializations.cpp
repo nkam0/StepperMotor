@@ -57,6 +57,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     if (strcmp((char*)data, "homing") == 0) {
       Serial.println(message);
       homeRequest= true;
+      touchAttachInterrupt(CAPACITIVE_TOUCH_INPUT_PIN, ISR, TOUCH_THRESHOLD);
     }else{
       steps = message.substring(0, message.indexOf("&"));
       direction = message.substring(message.indexOf("&")+1, message.length());

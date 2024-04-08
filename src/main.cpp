@@ -8,12 +8,12 @@
 #include "../include/initializations.cpp"
 
 const int CAPACITIVE_TOUCH_INPUT_PIN = T9; // GPIO pin 32
-const int TOUCH_THRESHOLD = 40; // turn on light if touchRead value < this threshold
+const int TOUCH_THRESHOLD = 78; // turn on light if touchRead value < this threshold
 int endPoint = 1024;     // Move this many steps; 1024 = approx 1/4 turn
 
 // Replace with your network credentials
-const char* ssid = "BELL858";
-const char* password = "Bigbrain02";
+const char* ssid = "Microbonds";
+const char* password = "M1cr0be!";
 
 
 //Variables to save values from HTML form
